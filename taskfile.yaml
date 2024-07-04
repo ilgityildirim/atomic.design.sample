@@ -1,0 +1,34 @@
+#file: noinspection YAMLSchemaValidation,SpellCheckingInspection
+version: '3'
+
+dotenv: ['.env.local', '.env' ]
+
+tasks:
+  install:
+    desc: "Install the dependencies"
+    dir: ./cmd
+    cmds:
+      - echo 'Installing the dependencies'
+      - go mod tidy
+      - go mod download
+  generate:
+    desc: "Generate the data.json file"
+    dir: ./cmd
+    cmds:
+      - echo 'Generating the data.json file'
+      - go run ./...
+
+  docker-build:
+    desc: "Build the application in docker"
+    dir: ./cmd
+    cmds:
+      - echo 'Building the application in docker'
+      - docker compose build
+
+  docker-generate:
+    desc: "Start the application in docker"
+    dir: ./cmd
+    cmds:
+      - echo 'Starting the application in docker'
+      - docker compose up
+      - docker compose down

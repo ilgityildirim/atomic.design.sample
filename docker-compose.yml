@@ -1,0 +1,17 @@
+version: '3.9'
+
+volumes:
+  database:
+    driver: local
+
+services:
+  generate:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    working_dir: /app/cmd
+    env_file:
+      - .env.local
+    volumes:
+      - .:/app
+    command: sh -c "go run ./... && chmod 666 ../src/config/data.json"

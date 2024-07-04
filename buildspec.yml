@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+      golang: 1.20
+    commands:
+      - echo "current working directory $(pwd)"
+      - cd ./cmd && go mod download
+      - echo "generating data.json file in ./src/config"
+      - go run ./...
+  build:
+    commands:
+      - cd ./../
+      - echo "current working directory $(pwd)"
+      - rm -rf .env.dist .gitignore README.md ./cmd
+      - yarn install
+      - yarn build
+  post_build:
+    commands:
+      - aws s3 rm "${S3_BUCKET}" --recursive
+      - aws s3 cp --recursive ./dist "${S3_BUCKET}"
+      - aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths "/*"
+      - echo build completed on `date`
+artifacts:
+  files:
+    - ./**/*
+      codebuild-bmw-service-calc-2nd-hand-stgng-lu-pwa-service-role
